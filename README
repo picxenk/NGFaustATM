@@ -1,0 +1,4 @@
+
+## external libraries
+ * printer.py : https://github.com/luopio/py-thermal-printer 
+ * PubNub : https://github.com/pubnub/python/
