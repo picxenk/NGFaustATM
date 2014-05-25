@@ -56,6 +56,7 @@ def print_info_on(p):
     # i = Image.open("image2.png")
     # data = list(i.getdata())
     # w, h = i.size
+    time.sleep(0.5)
     p.print_bitmap(info_data, info_image_w, info_image_h, False)
 
 
@@ -76,17 +77,25 @@ def print_test_on(p):
 
 
 def print_receipt_on(p, message):
-    print_header_on(p)
-    p.linefeed()
 
     markup_text_1 = """nc Thank you. {userName}!
 nc Deal with Mephisto.
 nc To get cash by friends.
 """.format(**message)
+    markup_text_2 = """nr Total Credit: ${credit}
+nr Withdrawn Friend Amount: {withdrawListSize}
+nr Total Cash: ${cash}
+nr Balance: ${balance}
+""".format(**message)
+
+    print_header_on(p)
+    p.linefeed()
+
     p.print_markup(markup_text_1)
     p.linefeed()
 
     print_line_on(p)
+
     i = 1
     text = ''
     for f in message['withdrawList']:
@@ -102,14 +111,10 @@ nc To get cash by friends.
     p.font_b_on()
     p.print_text(text)
     p.font_b_off()
+
     print_line_on(p)
     p.linefeed()
 
-    markup_text_2 = """nr Total Credit: ${credit}
-nr Withdrawn Friend Amount: {withdrawListSize}
-nr Total Cash: ${cash}
-nr Balance: ${balance}
-""".format(**message)
     p.print_markup(markup_text_2)
     p.linefeed()
 
