@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 #coding=utf-8
 
+import sys
 import json
 import time
 import Image, ImageDraw
 from twisted.internet import reactor
-from printer import *
-from Pubnub import Pubnub
 
 ## -----------------------------------------------------------------------
 ## Configuration
 ## -----------------------------------------------------------------------
+faust_atm_home_path = '/home/pi/NGFaustATM'
 port = ThermalPrinter.SERIALPORT
 printer = ThermalPrinter(serialport=port)
 
@@ -23,6 +23,10 @@ channel_name = 'atm'
 info_image = Image.open("image2.png")
 info_data = list(info_image.getdata())
 info_image_w, info_image_h = info_image.size
+
+sys.path.append(faust_atm_home_path)
+from printer import *
+from Pubnub import Pubnub
 
 ## -----------------------------------------------------------------------
 ## Commands
