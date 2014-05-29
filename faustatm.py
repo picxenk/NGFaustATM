@@ -4,13 +4,21 @@
 import sys
 import json
 import time
+import urllib2
 import Image, ImageDraw
+from bs4 import BeautifulSoup
 from twisted.internet import reactor
+# from twisted.application import service
+
 
 ## -----------------------------------------------------------------------
 ## Configuration
 ## -----------------------------------------------------------------------
-faust_atm_home_path = '/home/pi/NGFaustATM'
+faust_atm_home_path = '/home/pi/NGFaustATM/'
+sys.path.append(faust_atm_home_path)
+from printer import *
+from Pubnub import Pubnub
+
 port = ThermalPrinter.SERIALPORT
 printer = ThermalPrinter(serialport=port)
 
@@ -20,13 +28,10 @@ secret_key = 'sec-c-YTBhZmExNzktMGRhNS00NWQyLWFiNTMtMWJiM2VkMDQ0MTk1'
 ssl_on = False
 channel_name = 'atm'
 
-info_image = Image.open("image2.png")
+info_image = Image.open(faust_atm_home_path+"image2.png")
 info_data = list(info_image.getdata())
 info_image_w, info_image_h = info_image.size
 
-sys.path.append(faust_atm_home_path)
-from printer import *
-from Pubnub import Pubnub
 
 ## -----------------------------------------------------------------------
 ## Commands
@@ -102,6 +107,7 @@ nr Balance: ${balance}
 
     i = 1
     text = ''
+    time.sleep(0.5)
     for f in message['withdrawList']:
         text += "%03d" % i
         text += chr(0x0B)
@@ -125,10 +131,20 @@ nr Balance: ${balance}
     print_info_on(p)
     print_footer_on(p)
 
+def make_english_name(non_english_name):
+    url = "http://s.lab.naver.com/translation/?query="+non_english_name+"&where=name"
+    response = urllib2.urlopen(url)
+    html = response.read()
+    soup = BeautifulSoup(html)
+    trs = soup.find_all('td', attrs={'class':'cell_engname'})
+    return trs[0].text
 
 def message_received(message):
     message['withdrawListSize'] = len(message['withdrawList'])
     message['balance'] = message['credit'] - message['cash']
+    if (message['userName'].isalpha()==False):
+        message['userName'] = make_english_name(message['userName'])
+
     print(message)
     print_receipt_on(printer, message)
    
@@ -150,4 +166,7 @@ pubnub.subscribe({
 ## -----------------------------------------------------------------------
 ## IO Event Loop
 ## -----------------------------------------------------------------------
-reactor.run()
+try:
+    pubnub.start()
+except:
+    pass
