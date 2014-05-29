@@ -100,6 +100,8 @@ nr Balance: ${balance}
     text = ''
     time.sleep(0.5)
     for f in message['withdrawList']:
+        if (f['friendName'].isalpha()==False):
+            f['friendName'] = make_english_name(f['friendName'])
         text += "%03d" % i
         text += chr(0x0B)
         text += f['friendName']
@@ -128,7 +130,10 @@ def make_english_name(non_english_name):
     html = response.read()
     soup = BeautifulSoup(html)
     trs = soup.find_all('td', attrs={'class':'cell_engname'})
-    return trs[0].text
+    if len(trs)>=1:
+        return trs[0].text
+    else:
+        return non_english_name
 
 def message_received(message):
     message['withdrawListSize'] = len(message['withdrawList'])
