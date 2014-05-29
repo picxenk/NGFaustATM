@@ -55,6 +55,7 @@ def print_header_on(p):
     p.font_b_off()
     p.linefeed()
 
+
 def print_line_on(p):
     # line = "────────────────────────────────────"
     line = chr(0xC4)*32
@@ -73,16 +74,6 @@ def print_footer_on(p):
     p.linefeed()
     p.linefeed()
     p.linefeed()
-
-
-def print_test_on(p):
-    print_header_on(p)
-    p.print_text("Go Go\n")
-    p.print_text("Nolgong\n")
-    p.linefeed()
-    markup="uc  No.                          **"
-    p.print_markup(markup)
-    print_footer_on(p)
 
 
 def print_receipt_on(p, message):
