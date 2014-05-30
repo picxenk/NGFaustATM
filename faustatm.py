@@ -26,7 +26,7 @@ publish_key = 'pub-c-36769b01-35f9-4b49-807d-401a21cff9b8'
 subscribe_key = 'sub-c-252a6482-e243-11e3-9849-02ee2ddab7fe'
 secret_key = 'sec-c-YTBhZmExNzktMGRhNS00NWQyLWFiNTMtMWJiM2VkMDQ0MTk1'
 ssl_on = False
-channel_name = 'atm'
+channel_name = 'atm2'
 
 info_image = Image.open(faust_atm_home_path+"image2.png")
 info_data = list(info_image.getdata())
@@ -82,10 +82,10 @@ def print_receipt_on(p, message):
 nc Deal with Mephisto.
 nc To get cash by friends.
 """.format(**message)
-    markup_text_2 = """nr Total Credit: ${credit}
+    markup_text_2 = """nr Total Credit: ${totalCredit}
 nr Withdrawn Friend Amount: {withdrawListSize}
 nr Total Cash: ${cash}
-nr Balance: ${balance}
+nr Balance: ${credit}
 """.format(**message)
 
     print_header_on(p)
@@ -137,7 +137,7 @@ def make_english_name(non_english_name):
 
 def message_received(message):
     message['withdrawListSize'] = len(message['withdrawList'])
-    message['balance'] = message['credit'] - message['cash']
+    message['totalCredit'] = message['credit'] + message['cash']
     if (message['userName'].isalpha()==False):
         message['userName'] = make_english_name(message['userName'])
 
